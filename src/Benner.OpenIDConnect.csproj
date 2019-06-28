@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>João Paulo Melo</Authors>
+    <Company>Benner Sistemas</Company>
+    <Product>Benner Tecnologia</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>Generic client to use OpenID Connect over any Identity Server Solution, like WSO2, Keycloak, IdentityServer4.</Description>
+    <PackageProjectUrl>https://github.com/benner-sistemas/oidc</PackageProjectUrl>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="3.10.10" />
+    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+  </ItemGroup>
+
+</Project>
