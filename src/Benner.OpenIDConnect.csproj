@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Authors>João Paulo Melo</Authors>
     <Company>Benner Sistemas</Company>
     <Product>Benner Tecnologia</Product>
@@ -16,6 +16,7 @@
     <Copyright>Benner Sistemas</Copyright>
     <RepositoryUrl>https://github.com/benner-sistemas/oidc</RepositoryUrl>
     <PackageTags>OpenID Connect; OIDC; oidc; OpenId; openid; open-id; identity server; oauth 2; oauth2; oidc-client</PackageTags>
+    <Version>0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
