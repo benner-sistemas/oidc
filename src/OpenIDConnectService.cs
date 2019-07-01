@@ -32,7 +32,6 @@ namespace Benner.Tecnologia.OpenIDConnect
             var passwordResponse = _httpClient.RequestPasswordTokenAsync(request).Result;
             if (passwordResponse.IsError)
             {
-                System.Diagnostics.Debugger.Launch();
                 throw new InvalidOperationException(passwordResponse.Error);
             }
 
