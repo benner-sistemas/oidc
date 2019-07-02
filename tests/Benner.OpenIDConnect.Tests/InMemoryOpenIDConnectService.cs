@@ -21,6 +21,7 @@ namespace Benner.OpenIDConnect.Tests
             if (_data.TryGetValue(userName, out storedPassword) && password.Equals(storedPassword))
                 return "accesstoken content";
 
+
             throw new InvalidOperationException("Invalid authentication");
         }
     }
