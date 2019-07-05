@@ -19,13 +19,13 @@ namespace Benner.Tecnologia.OpenIDConnect
             var request = new PasswordTokenRequest
             {
                 Address = Configuration.TokenEndpoint,
-            
+
                 ClientId = Configuration.ClientID,
                 ClientSecret = Configuration.ClientSecret,
-            
+
                 UserName = userName,
                 Password = password,
-            
+
                 Scope = "openid profile email updated_at groups",
             };
 
@@ -36,6 +36,21 @@ namespace Benner.Tecnologia.OpenIDConnect
             }
 
             return passwordResponse.AccessToken;
+        }
+
+        public string GetUserInfo(string accessToken)
+        {
+            var userInfoResponse = _httpClient.GetUserInfoAsync(new UserInfoRequest
+            {
+                Address = Configuration.UserInfoEndpoint,
+                Token = accessToken,
+            }).Result;
+
+            if (userInfoResponse.IsError)
+            {
+                throw new InvalidOperationException(userInfoResponse.Error);
+            }
+            return userInfoResponse.Raw;
         }
     }
 }

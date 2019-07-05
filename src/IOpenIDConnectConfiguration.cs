@@ -3,7 +3,7 @@
     public interface IOpenIDConnectConfiguration
     {
         string TokenEndpoint { get; }
-        string UserinfoEndpoint { get; }
+        string UserInfoEndpoint { get; }
         string ClientID { get; }
         string ClientSecret { get; }
     }

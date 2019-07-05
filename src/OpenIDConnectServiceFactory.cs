@@ -1,5 +1,4 @@
-﻿using System;
-using Benner.Tecnologia.Common.Services;
+﻿using Benner.Tecnologia.Common.Services;
 using Ninject;
 
 namespace Benner.Tecnologia.OpenIDConnect

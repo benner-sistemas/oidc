@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benner.OpenIDConnect", "src\Benner.OpenIDConnect.csproj", "{0903E301-12EE-4083-A4D2-3571FB6ACBD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benner.OpenIDConnect.Tests", "tests\Benner.OpenIDConnect.Tests\Benner.OpenIDConnect.Tests.csproj", "{AF5B42C3-7E12-499A-B1F2-610E813D7E76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benner.OpenIDConnect.Tests", "tests\Benner.OpenIDConnect.Tests\Benner.OpenIDConnect.Tests.csproj", "{AF5B42C3-7E12-499A-B1F2-610E813D7E76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benner.OpenIDConnect.Integration.Tests", "tests\Benner.OpenIDConnect.Integration.Tests\Benner.OpenIDConnect.Integration.Tests.csproj", "{E2B545B6-942C-495C-A530-9B709486F5B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,8 @@ Global
 		{AF5B42C3-7E12-499A-B1F2-610E813D7E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF5B42C3-7E12-499A-B1F2-610E813D7E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF5B42C3-7E12-499A-B1F2-610E813D7E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2B545B6-942C-495C-A530-9B709486F5B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2B545B6-942C-495C-A530-9B709486F5B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

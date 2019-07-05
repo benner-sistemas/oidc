@@ -19,10 +19,15 @@ namespace Benner.OpenIDConnect.Tests
             string storedPassword;
 
             if (_data.TryGetValue(userName, out storedPassword) && password.Equals(storedPassword))
-                return "accesstoken content";
+                return $"{userName}-accesstoken";
 
 
             throw new InvalidOperationException("Invalid authentication");
+        }
+
+        public string GetUserInfo(string accessToken)
+        {
+            return "{\"sub\":\"f2a8d5e6\",\"email_verified\":true,\"name\":\"João Melo\",\"groups\":[\"/Grupo-Teste\",\"/Grupo-Teste/Outro-grupo\",\"/sysdba\"],\"preferred_username\":\"joao.melo\",\"given_name\":\"João\",\"family_name\":\"Melo\",\"email\":\"joao.melo@benner.com.br\"}";
         }
     }
 }

@@ -5,12 +5,12 @@ namespace Benner.Tecnologia.OpenIDConnect
 {
     public class OpenIDConnectConfiguration : IOpenIDConnectConfiguration
     {
-        public string TokenEndpoint => ConfigurationManager.AppSettings["oidc-token-endpoint"];
+        public string TokenEndpoint => ConfigurationManager.AppSettings["oidc:TokenEndpoint"];
 
-        public string UserinfoEndpoint => ConfigurationManager.AppSettings["oidc-userinfo-endpoint"];
+        public string UserInfoEndpoint => ConfigurationManager.AppSettings["oidc:UserInfoEndpoint"];
 
-        public string ClientID => ConfigurationManager.AppSettings["oidc-client-id"];
+        public string ClientID => ConfigurationManager.AppSettings["oidc:ClientID"];
 
-        public string ClientSecret => ConfigurationManager.AppSettings["oidc-client-secret"];
+        public string ClientSecret => ConfigurationManager.AppSettings["oid:ClientSecret"];
     }
 }
