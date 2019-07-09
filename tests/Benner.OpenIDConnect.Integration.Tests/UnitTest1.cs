@@ -1,6 +1,5 @@
 using Benner.Tecnologia.Common.Services;
 using Benner.Tecnologia.OpenIDConnect;
-using IdentityModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
 

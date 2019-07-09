@@ -6,6 +6,6 @@
 
         string GrantPasswordAccessToken(string userName, string password);
 
-        string GetUserInfo(string accessToken);
+        UserInfo GetUserInfo(string accessToken);
     }
 }

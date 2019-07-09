@@ -1,6 +1,8 @@
 ﻿using Benner.Tecnologia.Common.Services;
 using IdentityModel.Client;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 
 namespace Benner.Tecnologia.OpenIDConnect
@@ -38,7 +40,7 @@ namespace Benner.Tecnologia.OpenIDConnect
             return passwordResponse.AccessToken;
         }
 
-        public string GetUserInfo(string accessToken)
+        public UserInfo GetUserInfo(string accessToken)
         {
             var userInfoResponse = _httpClient.GetUserInfoAsync(new UserInfoRequest
             {
@@ -47,10 +49,31 @@ namespace Benner.Tecnologia.OpenIDConnect
             }).Result;
 
             if (userInfoResponse.IsError)
-            {
                 throw new InvalidOperationException(userInfoResponse.Error);
-            }
-            return userInfoResponse.Raw;
+
+            if (userInfoResponse.Json == null)
+                throw new InvalidOperationException($"Identity Server returned invalid user info (id_token) from '{Configuration.UserInfoEndpoint}' response '{userInfoResponse.Raw}'");
+
+            return ConvertToUserInfo(userInfoResponse.Json);
+        }
+
+        private UserInfo ConvertToUserInfo(dynamic rawObject)
+        {
+            var result = new UserInfo();
+
+            result.Name = rawObject.name ?? throw new InvalidOperationException($"Property 'name' not found at user info (id_token) from Identity Server: {rawObject}");
+            result.Email = rawObject.email ?? throw new InvalidOperationException($"Property 'email' not found at user info (id_token) from Identity Server: {rawObject}");
+            result.UserName = rawObject.username ?? throw new InvalidOperationException($"Property 'username' not found at user info (id_token) from Identity Server: {rawObject}");
+            if (rawObject.groups == null)
+                throw new InvalidOperationException($"Property 'groups' not found at user info (id_token) from Identity Server: {rawObject}");
+            if (!(rawObject.groups is JArray))
+                throw new InvalidOperationException($"Property 'groups' from user info (id_token) must be array : {rawObject}");
+
+            result.Groups = new List<string>();
+            foreach (var group in rawObject.groups)
+                result.Groups.Add(group.ToString());
+
+            return result;
         }
     }
 }

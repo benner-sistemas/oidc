@@ -11,6 +11,6 @@ namespace Benner.Tecnologia.OpenIDConnect
 
         public string ClientID => ConfigurationManager.AppSettings["oidc:ClientID"];
 
-        public string ClientSecret => ConfigurationManager.AppSettings["oid:ClientSecret"];
+        public string ClientSecret => ConfigurationManager.AppSettings["oidc:ClientSecret"];
     }
 }
