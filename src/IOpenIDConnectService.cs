@@ -6,6 +6,8 @@
 
         string GrantPasswordAccessToken(string userName, string password);
 
+        dynamic GetRawJson(string accessToken);
+
         UserInfo GetUserInfo(string accessToken);
     }
 }
