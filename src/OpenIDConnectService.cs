@@ -42,6 +42,12 @@ namespace Benner.Tecnologia.OpenIDConnect
 
         public UserInfo GetUserInfo(string accessToken)
         {
+            var json = GetRawJson(accessToken);
+            return ConvertToUserInfo(json);
+        }
+
+        public dynamic GetRawJson(string accessToken)
+        {
             var userInfoResponse = _httpClient.GetUserInfoAsync(new UserInfoRequest
             {
                 Address = Configuration.UserInfoEndpoint,
@@ -54,7 +60,7 @@ namespace Benner.Tecnologia.OpenIDConnect
             if (userInfoResponse.Json == null)
                 throw new InvalidOperationException($"Identity Server returned invalid user info (id_token) from '{Configuration.UserInfoEndpoint}' response '{userInfoResponse.Raw}'");
 
-            return ConvertToUserInfo(userInfoResponse.Json);
+            return userInfoResponse.Json;
         }
 
         private UserInfo ConvertToUserInfo(dynamic rawObject)
