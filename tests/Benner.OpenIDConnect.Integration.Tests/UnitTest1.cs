@@ -35,5 +35,9 @@ namespace Benner.OpenIDConnect.Integration.Tests
         public string ClientID => "benner-wes-client";
 
         public string ClientSecret => "311e0584-d15d-4a3b-9dbe-09479ac63410";
+
+        public string Issuer => "http://192.168.5.82:8080/auth/realms/master";
+
+        public string Certificate => "[certificate]";
     }
 }
