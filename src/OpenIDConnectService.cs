@@ -4,6 +4,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Benner.Tecnologia.OpenIDConnect
 {
@@ -12,6 +16,11 @@ namespace Benner.Tecnologia.OpenIDConnect
         public IOpenIDConnectConfiguration Configuration { get; set; }
 
         private static readonly HttpClient _httpClient = new HttpClient();
+
+        public OpenIDConnectService()
+        {
+            Configuration.Validate();
+        }
 
         public string GrantPasswordAccessToken(string userName, string password)
         {
@@ -54,13 +63,40 @@ namespace Benner.Tecnologia.OpenIDConnect
                 Token = accessToken,
             }).Result;
 
-            if (userInfoResponse.IsError)
-                throw new InvalidOperationException(userInfoResponse.Error);
+            if (!userInfoResponse.IsError)
+                return userInfoResponse.Json ??
+                    throw new InvalidOperationException($"Identity Server returned invalid user info (id_token) from '{Configuration.UserInfoEndpoint}' response '{userInfoResponse.Raw}'");
 
-            if (userInfoResponse.Json == null)
-                throw new InvalidOperationException($"Identity Server returned invalid user info (id_token) from '{Configuration.UserInfoEndpoint}' response '{userInfoResponse.Raw}'");
+            try
+            {
+                var jwt = ValidateResponse(userInfoResponse);
+                var payload = Base64UrlEncoder.Decode(jwt.EncodedPayload);
+                return JsonConvert.DeserializeObject(payload);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("Failed to validate user token.", e);
+            }
+        }
 
-            return userInfoResponse.Json;
+        private JwtSecurityToken ValidateResponse(UserInfoResponse response)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = response.Raw;
+            if (!handler.CanReadToken(token))
+                throw new InvalidOperationException(response.Error);
+
+            var cert = new X509Certificate2(Convert.FromBase64String(Configuration.Certificate));
+            var parameters = new TokenValidationParameters
+            {
+                ValidAudience = Configuration.ClientID,
+                ValidIssuer = Configuration.Issuer,
+                IssuerSigningKey = new X509SecurityKey(cert),
+                RequireExpirationTime = false,
+            };
+
+            handler.ValidateToken(token, parameters, out SecurityToken st);
+            return (JwtSecurityToken)st;
         }
 
         private UserInfo ConvertToUserInfo(dynamic rawObject)

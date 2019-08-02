@@ -16,7 +16,7 @@
     <Copyright>Benner Sistemas</Copyright>
     <RepositoryUrl>https://github.com/benner-sistemas/oidc</RepositoryUrl>
     <PackageTags>OpenID Connect; OIDC; oidc; OpenId; openid; open-id; identity server; oauth 2; oauth2; oidc-client</PackageTags>
-    <Version>0.0.6</Version>
+    <Version>0.0.8</Version>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageReleaseNotes>openid-connect
 oidc
@@ -32,6 +32,12 @@ keycloak
 identityserver4
 wso2-identity-server
 wso2is</PackageReleaseNotes>
+    <AssemblyVersion>0.0.8.0</AssemblyVersion>
+    <FileVersion>0.0.8.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +45,7 @@ wso2is</PackageReleaseNotes>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.3.0" />
   </ItemGroup>
 
 </Project>
