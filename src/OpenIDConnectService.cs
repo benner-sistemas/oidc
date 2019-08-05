@@ -13,14 +13,18 @@ namespace Benner.Tecnologia.OpenIDConnect
 {
     public class OpenIDConnectService : IOpenIDConnectService
     {
-        public IOpenIDConnectConfiguration Configuration { get; set; }
+        private IOpenIDConnectConfiguration _configuration;
+        public IOpenIDConnectConfiguration Configuration
+        {
+            get { return _configuration; }
+            set
+            {
+                _configuration = value;
+                _configuration?.Validate();
+            }
+        }
 
         private static readonly HttpClient _httpClient = new HttpClient();
-
-        public OpenIDConnectService()
-        {
-            Configuration.Validate();
-        }
 
         public string GrantPasswordAccessToken(string userName, string password)
         {
