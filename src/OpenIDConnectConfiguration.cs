@@ -13,9 +13,9 @@ namespace Benner.Tecnologia.OpenIDConnect
 
         public string ClientSecret => ConfigurationManager.AppSettings["oidc:ClientSecret"];
 
-        public string Issuer => ConfigurationManager.AppSettings["oidc:Issuer"];
+        public string Issuer => ConfigurationManager.AppSettings["oidc:TokenValidationIssuer"];
 
-        public string Certificate => ConfigurationManager.AppSettings["oidc:Certificate"];
+        public string Certificate => ConfigurationManager.AppSettings["oidc:TokenValidationCertificate"];
 
         public void Validate()
         {

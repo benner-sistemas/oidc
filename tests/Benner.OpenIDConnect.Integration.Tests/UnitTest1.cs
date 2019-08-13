@@ -39,5 +39,10 @@ namespace Benner.OpenIDConnect.Integration.Tests
         public string Issuer => "http://192.168.5.82:8080/auth/realms/master";
 
         public string Certificate => "[certificate]";
+
+        public void Validate()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
