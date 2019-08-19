@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace Benner.Tecnologia.OpenIDConnect
 {
@@ -25,6 +26,11 @@ namespace Benner.Tecnologia.OpenIDConnect
         }
 
         private static readonly HttpClient _httpClient = new HttpClient();
+
+        ~OpenIDConnectService()
+        {
+            _httpClient.Dispose();
+        }
 
         public string GrantPasswordAccessToken(string userName, string password)
         {
@@ -73,7 +79,7 @@ namespace Benner.Tecnologia.OpenIDConnect
 
             try
             {
-                var jwt = ValidateResponse(userInfoResponse);
+                ValidateToken(userInfoResponse.Raw, out JwtSecurityToken jwt);
                 var payload = Base64UrlEncoder.Decode(jwt.EncodedPayload);
                 return JsonConvert.DeserializeObject(payload);
             }
@@ -83,12 +89,16 @@ namespace Benner.Tecnologia.OpenIDConnect
             }
         }
 
-        private JwtSecurityToken ValidateResponse(UserInfoResponse response)
+        /// <summary>
+        /// Validates the token with certificate and throws exception if invalid
+        /// </summary>
+        /// <param name="accessToken"></param>
+        public ClaimsPrincipal ValidateToken(string accessToken, out JwtSecurityToken jwt)
         {
+            var token = accessToken;
             var handler = new JwtSecurityTokenHandler();
-            var token = response.Raw;
             if (!handler.CanReadToken(token))
-                throw new InvalidOperationException(response.Error);
+                throw new InvalidOperationException("The token is not in a valid JWT format.");
 
             var cert = new X509Certificate2(Convert.FromBase64String(Configuration.Certificate));
             var parameters = new TokenValidationParameters
@@ -96,11 +106,22 @@ namespace Benner.Tecnologia.OpenIDConnect
                 ValidAudience = Configuration.ClientID,
                 ValidIssuer = Configuration.Issuer,
                 IssuerSigningKey = new X509SecurityKey(cert),
-                RequireExpirationTime = false,
+                RequireExpirationTime = false
             };
 
-            handler.ValidateToken(token, parameters, out SecurityToken st);
-            return (JwtSecurityToken)st;
+            var id = handler.ValidateToken(token, parameters, out SecurityToken st);
+            jwt = (JwtSecurityToken)st;
+            return id;
+        }
+
+        public dynamic GetJsonPayloadFromToken(string accessToken)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            if (!handler.CanReadToken(accessToken))
+                throw new InvalidOperationException("The token is not in a valid JWT format.");
+            var jwt = handler.ReadJwtToken(accessToken);
+            var payload = Base64UrlEncoder.Decode(jwt.EncodedPayload);
+            return JsonConvert.DeserializeObject(payload);
         }
 
         private UserInfo ConvertToUserInfo(dynamic rawObject)
