@@ -1,24 +1,40 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Benner.Tecnologia.Common.Services
 {
     public interface IOpenIDConnectService
     {
+        /// <summary>
+        /// Get configuration
+        /// </summary>
         IOpenIDConnectConfiguration Configuration { set; get; }
 
+        /// <summary>
+        /// Requests access_token based on user name and password
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         string GrantPasswordAccessToken(string userName, string password);
 
-        dynamic GetRawJson(string accessToken);
-
-        UserInfo GetUserInfo(string accessToken);
+        /// <summary>
+        /// Validate jwt security token
+        /// </summary>
+        /// <param name="jwtSecurityToken"></param>
+        void ValidateJwtSecutiryToken(JwtSecurityToken jwtSecurityToken);
 
         /// <summary>
-        /// Validates the token with certificate and throws exception if invalid
+        /// Recover user info from jwt payload
+        /// </summary>
+        /// <param name="jwtPayload"></param>
+        /// <returns></returns>
+        UserInfo RecoverUserInfoFromJwtPayload(JwtPayload jwtPayload);
+
+        /// <summary>
+        /// Requests id_token from identity server, based on access_token 
         /// </summary>
         /// <param name="accessToken"></param>
-        ClaimsPrincipal ValidateToken(string accessToken, out JwtSecurityToken jwt);
-
-        dynamic GetJsonPayloadFromToken(string accessToken);
+        /// <returns></returns>
+        UserInfo RecoverUserInfoFromIdentityServer(string accessToken);
     }
 }

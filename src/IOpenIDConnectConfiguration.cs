@@ -4,6 +4,8 @@
     {
         string TokenEndpoint { get; }
         string UserInfoEndpoint { get; }
+        string JsonWebKeySetEndpoint { get; }
+        string AuthorizationEndpoint { get; }
         string ClientID { get; }
         string ClientSecret { get; }
         string Issuer { get; }

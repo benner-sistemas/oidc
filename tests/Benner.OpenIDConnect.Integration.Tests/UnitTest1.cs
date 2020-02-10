@@ -14,7 +14,7 @@ namespace Benner.OpenIDConnect.Integration.Tests
             var iocKernel = new StandardKernel();
             iocKernel.Bind<IOpenIDConnectServiceFactory>().To<OpenIDConnectServiceFactory>();
             iocKernel.Bind<IOpenIDConnectConfiguration>().To<DemoIdentityServerConfiguration>();
-            iocKernel.Bind<IOpenIDConnectService>().To<OpenIDConnectService>();
+            iocKernel.Bind<IOpenIDConnectService>().To<OpenIDConnectServiceBase>();
 
             var serviceFactory = iocKernel.Get<IOpenIDConnectServiceFactory>();
             var service = serviceFactory.CreateOpenIDConnectService(iocKernel);
@@ -22,27 +22,30 @@ namespace Benner.OpenIDConnect.Integration.Tests
             var accessToken = service.GrantPasswordAccessToken("joao.melo", "keycloak");
             Assert.IsNotNull(accessToken);
 
-            var idToken = service.GetUserInfo(accessToken);
+            var idToken = service.RecoverUserInfoFromIdentityServer(accessToken);
             Assert.IsNotNull(idToken);
         }
     }
     public class DemoIdentityServerConfiguration : IOpenIDConnectConfiguration
     {
-        public string TokenEndpoint => "http://192.168.5.82:8080/auth/realms/master/protocol/openid-connect/token";
+        public string TokenEndpoint => "http://server/auth/realms/master/protocol/openid-connect/token";
 
-        public string UserInfoEndpoint => "http://192.168.5.82:8080/auth/realms/master/protocol/openid-connect/userinfo";
+        public string UserInfoEndpoint => "http://server/auth/realms/master/protocol/openid-connect/userinfo";
 
-        public string ClientID => "benner-wes-client";
+        public string ClientID => "wes-leof";
 
-        public string ClientSecret => "311e0584-d15d-4a3b-9dbe-09479ac63410";
+        public string ClientSecret => "123";
 
-        public string Issuer => "http://192.168.5.82:8080/auth/realms/master";
+        public string Issuer => "http://server/auth/realms/master";
 
-        public string Certificate => "[certificate]";
+        public string Certificate => "123";
+
+        public string JsonWebKeySetEndpoint => throw new System.NotImplementedException();
+
+        public string AuthorizationEndpoint => throw new System.NotImplementedException();
 
         public void Validate()
         {
-            throw new System.NotImplementedException();
         }
     }
 }
