@@ -1,6 +1,7 @@
 ﻿using Benner.Tecnologia.Common.Services;
 using IdentityModel.Client;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 
@@ -61,6 +62,11 @@ namespace Benner.Tecnologia.OpenIDConnect
             var userInfo = RecoverUserInfoFromJwtPayload(jwtSecurityToken.Payload);
 
             return userInfo;
+        }
+
+        public virtual List<string> TranslateGroupNames(List<string> groupIdList)
+        {
+            return groupIdList;
         }
     }
 }

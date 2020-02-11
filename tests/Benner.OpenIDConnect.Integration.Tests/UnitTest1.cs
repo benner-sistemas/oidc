@@ -44,6 +44,8 @@ namespace Benner.OpenIDConnect.Integration.Tests
 
         public string AuthorizationEndpoint => throw new System.NotImplementedException();
 
+        public string TenantID => throw new System.NotImplementedException();
+
         public void Validate()
         {
         }

@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Benner.Tecnologia.Common.Services
 {
@@ -36,5 +37,12 @@ namespace Benner.Tecnologia.Common.Services
         /// <param name="accessToken"></param>
         /// <returns></returns>
         UserInfo RecoverUserInfoFromIdentityServer(string accessToken);
+
+        /// <summary>
+        /// Translate group.Id list received on id_token into group.DisplayName list
+        /// </summary>
+        /// <param name="groups"></param>
+        /// <returns></returns>
+        List<string> TranslateGroupNames(List<string> groupIdList);
     }
 }
