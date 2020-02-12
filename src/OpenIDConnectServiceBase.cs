@@ -47,20 +47,10 @@ namespace Benner.Tecnologia.OpenIDConnect
             if (userInfoResponse.IsError)
                 throw new InvalidOperationException($"Identity Server returned invalid user info (id_token) from '{Configuration.UserInfoEndpoint}' response '{userInfoResponse.Raw}'");
 
-            var rawToken = userInfoResponse.Raw;
-            if (!_jwtSecurityTokenHandler.CanReadToken(rawToken))
-                throw new InvalidOperationException("id_token não pode ser lido pois não está no formato JWT");
-
-            //
-            // validate 
-            var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(rawToken);
-            ValidateJwtSecutiryToken(jwtSecurityToken);
-
             //
             // recover user info
-            var userInfo = RecoverUserInfoFromJwtPayload(jwtSecurityToken.Payload);
-
-            return userInfo;
+            var payload = JwtPayload.Deserialize(userInfoResponse.Raw);
+            return RecoverUserInfoFromJwtPayload(payload);
         }
     }
 }

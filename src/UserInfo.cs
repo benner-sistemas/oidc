@@ -7,6 +7,6 @@ namespace Benner.Tecnologia.Common.Services
         public string Name { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
-        public List<string> Groups { get; set; }
+        public List<string> Groups { get; set; } = new List<string>();
     }
 }
