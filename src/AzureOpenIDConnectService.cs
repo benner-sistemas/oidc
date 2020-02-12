@@ -4,7 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 
 namespace Benner.Tecnologia.OpenIDConnect
 {
@@ -111,6 +113,66 @@ namespace Benner.Tecnologia.OpenIDConnect
 
             if (!(validatedToken is JwtSecurityToken))
                 throw new InvalidOperationException("ValidatedToken está nulo ou inválido");
+        }
+
+        /// <summary>
+        /// Translate group.Id list received on id_token into group.DisplayName list
+        /// </summary>
+        /// <param name="groupIdList"></param>
+        /// <returns></returns>
+        public override List<string> TranslateGroupNames(List<string> groupIdList)
+        {
+            //
+            // validations
+            if (groupIdList == null || groupIdList.Count == 0)
+                return groupIdList;
+
+            if (string.IsNullOrEmpty(Configuration.ClientID))
+                throw new InvalidOperationException("A configuração 'ClientID' não pode ser vazia.");
+
+            if (string.IsNullOrEmpty(Configuration.ClientSecret))
+                throw new InvalidOperationException("A configuração 'ClientSecret' não pode ser vazia.");
+
+            if (string.IsNullOrEmpty(Configuration.TokenEndpoint))
+                throw new InvalidOperationException("A configuração 'TokenEndpoint' não pode ser vazia.");
+
+            if (string.IsNullOrEmpty(Configuration.TenantID))
+                throw new InvalidOperationException("A configuração 'TenantID' não pode ser vazia.");
+
+            // acquire a brand new access_token via client_credentials, especificly to ms graph api
+            var clientCredentialsRequest = new ClientCredentialsTokenRequest();
+            clientCredentialsRequest.Address = Configuration.TokenEndpoint;
+            clientCredentialsRequest.ClientId = Configuration.ClientID;
+            clientCredentialsRequest.Scope = "https://graph.microsoft.com/.default";
+            clientCredentialsRequest.ClientSecret = Configuration.ClientSecret;
+
+            var accessTokenResponse = _httpClient.RequestClientCredentialsTokenAsync(clientCredentialsRequest).Result;
+            if (accessTokenResponse.IsError)
+                throw new InvalidOperationException($"Falha ao recuperar AcessToken. {accessTokenResponse.Error}: {accessTokenResponse.ErrorDescription}");
+
+            // set access_token on httpclient
+            _httpClient.SetBearerToken(accessTokenResponse.AccessToken);
+
+            var result = new List<string>(groupIdList.Count);
+            
+            // query ms graph api to recover group info
+            foreach (var groupId in groupIdList)
+            {
+                var url = $"https://graph.microsoft.com/v1.0/{Configuration.TenantID}/groups/{groupId}";
+                var groupResponse = _httpClient.GetAsync(url).Result;
+                if (!groupResponse.IsSuccessStatusCode)
+                    throw new InvalidOperationException($"Falha ao recuperar grupo. {groupResponse.ReasonPhrase}");
+
+                var jsonString = groupResponse.Content.ReadAsStringAsync().Result;
+                var group = JsonConvert.DeserializeObject<dynamic>(jsonString);
+                if (group?.displayName?.Value == null)
+                    throw new InvalidOperationException($"Grupo inválido");
+
+                // get group display name
+                result.Add(group.displayName.Value);
+            }
+
+            return result;
         }
     }
 }

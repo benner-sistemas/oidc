@@ -7,6 +7,7 @@
         string JsonWebKeySetEndpoint { get; }
         string AuthorizationEndpoint { get; }
         string ClientID { get; }
+        string TenantID { get; }
         string ClientSecret { get; }
         string Issuer { get; }
         string Certificate { get; }

@@ -4,6 +4,8 @@ namespace Benner.Tecnologia.Common.Services
 {
     public class UserInfo
     {
+        public UserInfo() => Groups = new List<string>();
+
         public string Name { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }

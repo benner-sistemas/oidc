@@ -21,6 +21,8 @@ namespace Benner.Tecnologia.OpenIDConnect
 
         public string Certificate => ConfigurationManager.AppSettings["oidc:TokenValidationCertificate"];
 
+        public string TenantID => ConfigurationManager.AppSettings["oidc:TenantID"];
+
         public void Validate()
         {
             var msg = "{0} not found or empty in configuration.";
