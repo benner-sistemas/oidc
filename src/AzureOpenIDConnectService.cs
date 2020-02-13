@@ -1,8 +1,6 @@
-﻿using Benner.Tecnologia.Common.Services;
-using IdentityModel.Client;
+﻿using IdentityModel.Client;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,60 +10,26 @@ namespace Benner.Tecnologia.OpenIDConnect
 {
     public class AzureOpenIDConnectService : OpenIDConnectServiceBase
     {
+        protected override string[] PossibleUsernameKeys => new string[] { "username", "preferred_username", "upn" };
+
+        /// <summary>
+        /// Requests access_token based on user name and password
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
         public override string GrantPasswordAccessToken(string userName, string password)
         {
-            if (Configuration == null)
-                throw new InvalidOperationException("OpenIDConnectServiceConfiguration not found");
-
-            var request = new PasswordTokenRequest
-            {
-                Address = Configuration.TokenEndpoint,
-
-                ClientId = Configuration.ClientID,
-                ClientSecret = Configuration.ClientSecret,
-
-                UserName = userName,
-                Password = password,
-
-                Scope = "openid profile email updated_at groups",
-            };
-
-            var passwordResponse = _httpClient.RequestPasswordTokenAsync(request).Result;
-            if (passwordResponse.IsError)
-            {
-                throw new InvalidOperationException(passwordResponse.Error);
-            }
-
-            return passwordResponse.AccessToken;
+            return base.GetTokenResponse(userName, password, "openid profile email").AccessToken;
         }
 
-        public override UserInfo RecoverUserInfoFromJwtPayload(JwtPayload jwtPayload)
+        /// <summary>
+        /// Requests id_token based on user name and password
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        public override string GrantPasswordIdentityToken(string userName, string password)
         {
-            var result = new UserInfo();
-            result.Name = jwtPayload["name"] as string ?? throw new InvalidOperationException($"Property 'name' not found at user info (id_token) from Identity Server");
-
-            if (jwtPayload.ContainsKey("username"))
-                result.UserName = jwtPayload["username"] as string;
-            else if (jwtPayload.ContainsKey("preferred_username"))
-                result.UserName = jwtPayload["preferred_username"] as string;
-            else
-                throw new InvalidOperationException("id_token incompleto, 'username' ou 'preferred_username' não foi encontrado");
-
-            if (jwtPayload.ContainsKey("email"))
-                result.Email = jwtPayload["email"] as string;
-            else if (result.UserName.Contains("@"))
-                result.Email = result.UserName;
-            else
-                throw new InvalidOperationException("id_token incompleto, 'email' não foi encontrado");
-
-            if (jwtPayload.ContainsKey("groups"))
-            {
-                var rawGroups = jwtPayload["groups"] as JArray ?? throw new InvalidOperationException($"Property 'groups' not found at user info (id_token) from Identity Server");
-                foreach (var group in rawGroups)
-                    result.Groups.Add(group.ToString());
-            }
-
-            return result;
+            return base.GetTokenResponse(userName, password, "openid profile email").IdentityToken;
         }
 
         public override void ValidateJwtSecutiryToken(JwtSecurityToken jwtSecurityToken)
@@ -154,7 +118,7 @@ namespace Benner.Tecnologia.OpenIDConnect
             _httpClient.SetBearerToken(accessTokenResponse.AccessToken);
 
             var result = new List<string>(groupIdList.Count);
-            
+
             // query ms graph api to recover group info
             foreach (var groupId in groupIdList)
             {
