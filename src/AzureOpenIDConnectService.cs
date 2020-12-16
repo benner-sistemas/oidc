@@ -37,7 +37,7 @@ namespace Benner.Tecnologia.OpenIDConnect
             if (string.IsNullOrEmpty(Configuration.JsonWebKeySetEndpoint))
                 throw new InvalidOperationException("A configuração 'JsonWebKeySetEndpoint' não pode ser vazia.");
 
-            var keysResponse = _httpClient.GetAsync(Configuration.JsonWebKeySetEndpoint).Result;
+            var keysResponse = HttpClientFactory.Instance.GetAsync(Configuration.JsonWebKeySetEndpoint).Result;
             if (!keysResponse.IsSuccessStatusCode)
                 throw new InvalidOperationException($"Falha ao recuperar JsonWebKeySet");
 
@@ -110,12 +110,12 @@ namespace Benner.Tecnologia.OpenIDConnect
             clientCredentialsRequest.Scope = "https://graph.microsoft.com/.default";
             clientCredentialsRequest.ClientSecret = Configuration.ClientSecret;
 
-            var accessTokenResponse = _httpClient.RequestClientCredentialsTokenAsync(clientCredentialsRequest).Result;
+            var accessTokenResponse = HttpClientFactory.Instance.RequestClientCredentialsTokenAsync(clientCredentialsRequest).Result;
             if (accessTokenResponse.IsError)
                 throw new InvalidOperationException($"Falha ao recuperar AcessToken. {accessTokenResponse.Error}: {accessTokenResponse.ErrorDescription}");
 
             // set access_token on httpclient
-            _httpClient.SetBearerToken(accessTokenResponse.AccessToken);
+            HttpClientFactory.Instance.SetBearerToken(accessTokenResponse.AccessToken);
 
             var result = new List<string>(groupIdList.Count);
 
@@ -123,7 +123,7 @@ namespace Benner.Tecnologia.OpenIDConnect
             foreach (var groupId in groupIdList)
             {
                 var url = $"https://graph.microsoft.com/v1.0/{Configuration.TenantID}/groups/{groupId}";
-                var groupResponse = _httpClient.GetAsync(url).Result;
+                var groupResponse = HttpClientFactory.Instance.GetAsync(url).Result;
                 if (!groupResponse.IsSuccessStatusCode)
                     throw new InvalidOperationException($"Falha ao recuperar grupo. {groupResponse.ReasonPhrase}");
 

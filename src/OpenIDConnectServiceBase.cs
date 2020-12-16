@@ -23,13 +23,12 @@ namespace Benner.Tecnologia.OpenIDConnect
         }
 
         protected readonly static JwtSecurityTokenHandler _jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-        protected static readonly HttpClient _httpClient = new HttpClient();
 
         protected abstract string[] PossibleUsernameKeys { get; }
 
         ~OpenIDConnectServiceBase()
         {
-            _httpClient.Dispose();
+            HttpClientFactory.Instance.Dispose();
         }
 
         public abstract string GrantPasswordAccessToken(string userName, string password);
@@ -51,7 +50,7 @@ namespace Benner.Tecnologia.OpenIDConnect
                 Scope = scopes,
             };
 
-            var passwordResponse = _httpClient.RequestPasswordTokenAsync(request).Result;
+            var passwordResponse = HttpClientFactory.Instance.RequestPasswordTokenAsync(request).Result;
             if (passwordResponse.IsError)
                 throw new InvalidOperationException(passwordResponse.Error);
 
@@ -91,7 +90,7 @@ namespace Benner.Tecnologia.OpenIDConnect
         {
             //
             // request for id_token
-            var userInfoResponse = _httpClient.GetUserInfoAsync(new UserInfoRequest
+            var userInfoResponse = HttpClientFactory.Instance.GetUserInfoAsync(new UserInfoRequest
             {
                 Address = Configuration.UserInfoEndpoint,
                 Token = accessToken,

@@ -37,7 +37,7 @@ namespace Benner.Tecnologia.OpenIDConnect
             if (string.IsNullOrEmpty(Configuration.JsonWebKeySetEndpoint))
                 throw new InvalidOperationException("A configuração 'JsonWebKeySetEndpoint' não pode ser vazia.");
 
-            var keysResponse = _httpClient.GetAsync(Configuration.JsonWebKeySetEndpoint).Result;
+            var keysResponse = HttpClientFactory.Instance.GetAsync(Configuration.JsonWebKeySetEndpoint).Result;
             if (!keysResponse.IsSuccessStatusCode)
                 throw new InvalidOperationException($"Falha ao recuperar JsonWebKeySet");
 
