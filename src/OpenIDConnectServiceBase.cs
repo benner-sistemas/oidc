@@ -109,17 +109,5 @@ namespace Benner.Tecnologia.OpenIDConnect
         {
             return groupIdList;
         }
-
-        /// <summary>
-        /// Gets user information through token requests
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        public UserInfo GetUserInfo(string userName, string password)
-        {
-            var idToken = GrantPasswordIdentityToken(userName, password);
-            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
-            return RecoverUserInfoFromJwtPayload(jwtToken.Payload);
-        }
     }
 }

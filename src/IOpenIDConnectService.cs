@@ -26,14 +26,6 @@ namespace Benner.Tecnologia.Common.Services
         string GrantPasswordIdentityToken(string userName, string password);
 
         /// <summary>
-        /// Gets user information through token requests
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        UserInfo GetUserInfo(string userName, string password);
-
-        /// <summary>
         /// Validate jwt security token
         /// </summary>
         /// <param name="jwtSecurityToken"></param>
