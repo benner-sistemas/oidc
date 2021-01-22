@@ -124,11 +124,18 @@ namespace Benner.Tecnologia.OpenIDConnect
             {
                 var url = $"https://graph.microsoft.com/v1.0/{Configuration.TenantID}/groups/{groupId}";
                 var groupResponse = HttpClientFactory.Instance.GetAsync(url).Result;
+
+                if (groupResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    continue;
+                }
+
                 if (!groupResponse.IsSuccessStatusCode)
                     throw new InvalidOperationException($"Falha ao recuperar grupo. {groupResponse.ReasonPhrase}");
 
                 var jsonString = groupResponse.Content.ReadAsStringAsync().Result;
                 var group = JsonConvert.DeserializeObject<dynamic>(jsonString);
+
                 if (group?.displayName?.Value == null)
                     throw new InvalidOperationException($"Grupo inválido");
 
