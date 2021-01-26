@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using Benner.Tecnologia.Common.Services;
+using IdentityModel.Client;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -19,9 +20,15 @@ namespace Benner.Tecnologia.OpenIDConnect
         /// <param name="password"></param>
         public override string GrantPasswordAccessToken(string userName, string password)
         {
-            return base.GetTokenResponse(userName, password, "openid profile email").AccessToken;
+            return base.GetTokenResponse(userName, password, "openid profile email").IdentityToken;
         }
 
+        public override UserInfo RecoverUserInfoFromIdentityServer(string accessToken)
+        {
+            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+             
+            return RecoverUserInfoFromJwtPayload(jwtToken.Payload);
+        }
         /// <summary>
         /// Requests id_token based on user name and password
         /// </summary>
